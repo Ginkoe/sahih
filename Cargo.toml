@@ -1,0 +1,28 @@
+[package]
+author = ["Adam Belcaid <ginkoe@protonmail.com>"]
+categories = ["command-line-interface", "command-line-utilities"]
+description = "Toolings for making Fullstack easier"
+keywords = ["cli", "terminal", "productivity", "git", "openapi", "swagger", "validation"]
+name = "sahih"
+version = "0.1.0"
+
+documentation = "https://sahih.ginkoe.me/readme"
+homepage = "https://sahih.ginkoe.me"
+repository = "https://ginkoe.com/ginkoe/sahih"
+
+exclude = [
+  "assets/*",
+  "tests/*",
+  "scripts/*",
+]
+
+edition = "2021"
+
+[dependencies]
+clap = {version = "3.0.0-rc.7"}
+log = "0.4.14"
+pretty_env_logger = "0.4"
+termcolor = "1.1.2"
+openapiv3 = "0.5.0"
+serde_json = "1.0"
+indexmap = "1.7.0"

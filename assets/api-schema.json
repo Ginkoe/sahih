@@ -1,0 +1,283 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_healthcheck",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/auction": {
+      "post": {
+        "operationId": "AuctionController_createAuction",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuctionCreateInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuctionRoomDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auction/house": {
+      "get": {
+        "operationId": "AuctionController_getAuction",
+        "parameters": [
+          {
+            "name": "houseId",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AuctionRoomDTO" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auction/live": {
+      "get": {
+        "operationId": "AuctionController_getLiveAuctions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AuctionRoomDTO" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auction/bid": {
+      "get": {
+        "operationId": "AuctionController_getRoomBids",
+        "parameters": [
+          {
+            "name": "roomId",
+            "required": true,
+            "in": "query",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BidsAggDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User Hyperspace Informations",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserSession" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bid/subscribe": {
+      "get": {
+        "operationId": "BidController_subscribe",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    },
+    "/bid": {
+      "post": {
+        "operationId": "BidController_putBid",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PlacingBidInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BidDto" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "Hyperauction API",
+    "description": "Hyperauction API",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AuctionCreateInput": {
+        "type": "object",
+        "properties": {
+          "spaceId": { "type": "string" },
+          "itemName": { "type": "string" },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "startingBid": { "type": "number" },
+          "minimumBid": { "type": "number" },
+          "auctionDuration": { "type": "number" }
+        },
+        "required": [
+          "spaceId",
+          "itemName",
+          "images",
+          "description",
+          "startingBid",
+          "minimumBid",
+          "auctionDuration"
+        ]
+      },
+      "AuctionRoomDTO": {
+        "type": "object",
+        "properties": {
+          "spaceId": { "type": "string" },
+          "itemName": { "type": "string" },
+          "images": { "type": "array", "items": { "type": "string" } },
+          "description": { "type": "string" },
+          "startingBid": { "type": "number" },
+          "minimumBid": { "type": "number" },
+          "auctionDuration": { "type": "number" },
+          "id": { "type": "string" },
+          "timeLeftInMinute": { "type": "number" },
+          "timeLeft": { "format": "date-time", "type": "string" },
+          "ended": { "type": "boolean" },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "spaceId",
+          "itemName",
+          "images",
+          "description",
+          "startingBid",
+          "minimumBid",
+          "auctionDuration",
+          "id",
+          "timeLeftInMinute",
+          "timeLeft",
+          "ended",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "BidderDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "avatarUrl": { "type": "string" }
+        },
+        "required": ["name", "avatarUrl"]
+      },
+      "BidDto": {
+        "type": "object",
+        "properties": {
+          "roomId": { "type": "string" },
+          "amount": { "type": "number" },
+          "id": { "type": "string" },
+          "bidderId": { "type": "string" },
+          "bidder": { "$ref": "#/components/schemas/BidderDto" },
+          "createdAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "roomId",
+          "amount",
+          "id",
+          "bidderId",
+          "bidder",
+          "createdAt"
+        ]
+      },
+      "BidsAggDto": {
+        "type": "object",
+        "properties": {
+          "count": { "type": "number" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BidDto" }
+          }
+        },
+        "required": ["count", "data"]
+      },
+      "UserSession": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "username": { "type": "string" },
+          "email": { "type": "string" },
+          "hyperId": { "type": "string" },
+          "spaceId": { "type": "string" },
+          "image": { "type": "string" },
+          "isHost": { "type": "boolean" }
+        },
+        "required": [
+          "id",
+          "name",
+          "username",
+          "email",
+          "hyperId",
+          "spaceId",
+          "image",
+          "isHost"
+        ]
+      },
+      "PlacingBidInput": {
+        "type": "object",
+        "properties": {
+          "roomId": { "type": "string" },
+          "amount": { "type": "number" }
+        },
+        "required": ["roomId", "amount"]
+      }
+    }
+  }
+}
