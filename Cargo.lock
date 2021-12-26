@@ -223,6 +223,8 @@ dependencies = [
  "log",
  "openapiv3",
  "pretty_env_logger",
+ "serde",
+ "serde_derive",
  "serde_json",
  "termcolor",
 ]
