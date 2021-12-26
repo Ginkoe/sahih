@@ -5,19 +5,21 @@ use openapiv3::Type;
 use super::model::{Model, ModelProperty};
 
 fn serialize_type(prop_type: &Type) -> String {
-    match prop_type {
-        Type::Number(_) => format!("number"),
-        Type::String(_) => format!("string"),
-        Type::Boolean {} => format!("boolean"),
+    let prop_type = match prop_type {
+        Type::Number(_) => "number",
+        Type::String(_) => "string",
+        Type::Boolean {} => "boolean",
         // TODO: Recursive Array implementation
         _ => {
             warn!(
                 "Serialization of type {:?} is not supported yet, collapsing to unknown",
                 prop_type
             );
-            format!("unknown")
+            "unknown"
         }
-    }
+    };
+
+    prop_type.to_string()
 }
 
 fn serialize_property(prop: &ModelProperty, is_required: bool) -> String {
@@ -30,7 +32,7 @@ fn serialize_property(prop: &ModelProperty, is_required: bool) -> String {
 
     let name = name.clone();
 
-    let name = if name.contains(" ") {
+    let name = if name.contains(' ') {
         format!("\"{}\"", name)
     } else {
         name
@@ -44,15 +46,15 @@ fn serialize_property(prop: &ModelProperty, is_required: bool) -> String {
     )
 }
 
-pub struct InterfaceGenerator<'a> {
-    pub name: &'a String,
+pub struct InterfaceGenerator {
+    pub name: String,
     properties: IndexSet<String>,
 }
 
-impl<'a> InterfaceGenerator<'a> {
-    pub fn new(name: &'a String) -> Self {
+impl InterfaceGenerator {
+    pub fn new(name: &str) -> Self {
         Self {
-            name,
+            name: name.to_string(),
             properties: IndexSet::new(),
         }
     }
@@ -60,10 +62,10 @@ impl<'a> InterfaceGenerator<'a> {
     pub fn from(model: &Model) -> InterfaceGenerator {
         let mut generator = InterfaceGenerator::new(&model.name);
         for (_, prop_type) in &model.properties {
-            generator.register_property(&prop_type);
+            generator.register_property(prop_type);
         }
 
-        return generator;
+        generator
     }
 
     pub fn register_property(&mut self, prop: &ModelProperty) {
@@ -89,7 +91,7 @@ mod tests {
     use openapiv3::{NumberType, SchemaData, StringType, Type};
 
     use crate::codegen::{
-        codegen::{serialize_property, serialize_type},
+        generator::{serialize_property, serialize_type},
         model::ModelProperty,
     };
 
@@ -117,7 +119,7 @@ mod tests {
 
         assert_eq!(serialize_type(&to_serialize), "boolean");
     }
-    
+
     #[test]
     fn it_serializes_required_prop() {
         let schema_data = SchemaData {

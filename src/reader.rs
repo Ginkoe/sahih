@@ -64,7 +64,7 @@ fn extract_heap_type(schema: ReferenceOr<Box<Schema>>) -> Option<(SchemaData, Sc
 
 pub fn consume_schemas(path: &str) -> Vec<Model> {
     let schema_buffer = std::fs::read_to_string(path).expect("Could not find user");
-    let openapi: OpenAPI = serde_json::from_str(&schema_buffer.as_str()).unwrap();
+    let openapi: OpenAPI = serde_json::from_str(schema_buffer.as_str()).unwrap();
 
     let components = openapi.components.unwrap();
     let schemas = components.schemas;
@@ -109,7 +109,7 @@ pub fn consume_schemas(path: &str) -> Vec<Model> {
             let model_prop = ModelProperty {
                 name: prop_name,
                 data: schema_data,
-                prop_type: prop_type,
+                prop_type,
             };
 
             model.properties.insert(model_prop.name.to_owned(), model_prop);

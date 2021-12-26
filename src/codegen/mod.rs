@@ -1,2 +1,4 @@
+mod generator;
 pub mod model;
-pub mod codegen;
+
+pub use generator::*;
