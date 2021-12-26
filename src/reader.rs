@@ -1,5 +1,5 @@
 use indexmap::IndexMap;
-use log::{warn, debug};
+use log::{debug, warn};
 use openapiv3::{ObjectType, OpenAPI, ReferenceOr, Schema, SchemaData, SchemaKind, Type};
 
 use crate::codegen::model::{Model, ModelProperty};
@@ -112,11 +112,13 @@ pub fn consume_schemas(path: &str) -> Vec<Model> {
                 prop_type,
             };
 
-            model.properties.insert(model_prop.name.to_owned(), model_prop);
+            model
+                .properties
+                .insert(model_prop.name.to_owned(), model_prop);
         }
 
         unwrapped_schemas.push(model);
     }
-    
+
     unwrapped_schemas
 }

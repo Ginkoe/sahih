@@ -7,9 +7,7 @@ use std::io;
 
 use log::debug;
 
-use crate::{reader::consume_schemas, codegen::InterfaceGenerator};
-
-
+use crate::{codegen::InterfaceGenerator, reader::consume_schemas};
 
 pub mod codegen;
 pub mod config;
@@ -22,7 +20,6 @@ pub struct Sahih {}
 pub struct SahihOptions<'a> {
     pub schema_path: &'a str,
 }
-
 
 impl Sahih {
     pub fn new() -> Self {
