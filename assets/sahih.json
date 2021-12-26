@@ -1,0 +1,10 @@
+{
+    "schemaalpha": {
+        "output": {
+            "target": "./assets/generated/model"
+        },
+        "input": {
+            "target": "./assets/api-schema.json"
+        }
+    }
+}
