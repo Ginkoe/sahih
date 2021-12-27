@@ -1,5 +1,5 @@
 use indexmap::IndexMap;
-use log::{debug, warn};
+use log::warn;
 use openapiv3::{ObjectType, OpenAPI, ReferenceOr, Schema, SchemaData, SchemaKind, Type};
 
 use crate::codegen::model::{Model, ModelProperty};
@@ -29,7 +29,6 @@ fn extract_object_type(schema: SchemaKind) -> Option<ObjectType> {
 }
 
 fn extract_stack_type(schema: ReferenceOr<Schema>) -> Option<(SchemaData, SchemaKind)> {
-    debug!("{:#?}", schema);
     match schema {
         ReferenceOr::Item(item) => {
             let Schema {

@@ -5,9 +5,12 @@ extern crate serde_json;
 
 use std::io;
 
-use log::debug;
+use log::{debug, info};
 
-use crate::{codegen::InterfaceGenerator, reader::consume_schemas};
+use crate::{
+    codegen::{InterfaceGenerator, ValidationGenerator, ValidatorLib},
+    reader::consume_schemas,
+};
 
 pub mod codegen;
 pub mod config;
@@ -30,10 +33,13 @@ impl Sahih {
         debug!("Running with options: {:?}", &opts);
         let schemas = consume_schemas(opts.schema_path);
 
-        for model in schemas {
-            let generator = InterfaceGenerator::from(&model);
+        for model in &schemas {
+            let generator = InterfaceGenerator::from(model);
             let serialized = generator.build();
             debug!("Serialized:\n {}", serialized);
+
+            let generator = ValidationGenerator::from(model, ValidatorLib::Yup);
+            info!("Serialized:\n {:#?}", generator);
         }
 
         Ok(())
