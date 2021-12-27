@@ -91,7 +91,7 @@ mod tests {
     use openapiv3::{NumberType, SchemaData, StringType, Type};
 
     use crate::codegen::{
-        generator::{serialize_property, serialize_type},
+        interface::{serialize_property, serialize_type},
         model::ModelProperty,
     };
 
