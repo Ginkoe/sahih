@@ -162,7 +162,7 @@
           "itemName": { "type": "string" },
           "images": { "type": "array", "items": { "type": "string" } },
           "description": { "type": "string" },
-          "startingBid": { "type": "number" },
+          "startingBid": { "type": "number", "minimum": 0, "maximum": 30 },
           "minimumBid": { "type": "number" },
           "auctionDuration": { "type": "number" }
         },
