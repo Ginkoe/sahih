@@ -44,7 +44,7 @@ impl ConfigManager {
 mod tests {
     #[test]
     fn it_deser_from_example_config() {
-        let file_path = "./assets/sahih.json";
+        let file_path = "./fixtures/sahih.json";
 
         let config_manager = crate::config::ConfigManager::from(file_path);
         let target_output = "./assets/generated/model";
