@@ -15,6 +15,15 @@ pub enum NumberRules {
     Max(f64),
 }
 
+impl NumberRules {
+    pub fn build(&self) -> String {
+        match self {
+            Self::Min(value) => format!(".min({})", value),
+            Self::Max(value) => format!(".max({})", value),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum StringRules {
     Min(usize),
@@ -23,6 +32,22 @@ pub enum StringRules {
     OneOf(Vec<String>),
     Email,
     Uuid,
+}
+
+impl StringRules {
+    pub fn build(&self) -> String {
+        match self {
+            Self::Min(value) => format!(".min({})", value),
+            Self::Max(value) => format!(".max({})", value),
+            Self::Email => ".email()".to_string(),
+            Self::Matches(regex) => format!(".matches(/{}/)", regex),
+            Self::Uuid => ".uuid()".to_string(),
+            Self::OneOf(enumerate) => {
+                let quoted: Vec<String> = enumerate.iter().map(|e| format!("`{}`", e)).collect();
+                quoted.join(",")
+            }
+        }
+    }
 }
 
 /*
