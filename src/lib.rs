@@ -38,15 +38,11 @@ impl Sahih {
                 let generator = InterfaceGenerator::from(model);
                 let serialized = generator.build();
                 debug!("Serialized:\n {}", serialized);
-    
+
                 let generator = ValidationGenerator::from(model);
                 info!("Serialized:\n {:#?}", generator);
             }
         }
-
-        
-
-        
 
         Ok(())
     }

@@ -2,7 +2,7 @@ extern crate clap;
 extern crate pretty_env_logger;
 extern crate termcolor;
 
-use clap::{arg, App, AppSettings, Arg};
+use clap::{App, AppSettings, Arg};
 use log::{debug, error};
 use sahih::{config::ConfigManager, Sahih};
 
