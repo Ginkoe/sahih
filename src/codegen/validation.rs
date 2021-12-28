@@ -4,6 +4,15 @@ use openapiv3::Type;
 
 use super::model::{Model, ModelProperty};
 
+trait BuildableRule {
+    fn build(&self) -> String;
+}
+
+fn collect_rules<B: BuildableRule>(prefix: &str, rules: &[B]) -> String {
+    let collected_rules: String = rules.iter().map(|rule| rule.build()).collect();
+    format!("{}{}", prefix, collected_rules)
+}
+
 #[derive(Debug)]
 pub enum ValidatorLib {
     Yup,
@@ -15,8 +24,8 @@ pub enum NumberRules {
     Max(f64),
 }
 
-impl NumberRules {
-    pub fn build(&self) -> String {
+impl BuildableRule for NumberRules {
+    fn build(&self) -> String {
         match self {
             Self::Min(value) => format!(".min({})", value),
             Self::Max(value) => format!(".max({})", value),
@@ -34,8 +43,8 @@ pub enum StringRules {
     Uuid,
 }
 
-impl StringRules {
-    pub fn build(&self) -> String {
+impl BuildableRule for StringRules {
+    fn build(&self) -> String {
         match self {
             Self::Min(value) => format!(".min({})", value),
             Self::Max(value) => format!(".max({})", value),
@@ -60,18 +69,31 @@ pub enum PropRules {
     Unsupported,
 }
 
+impl PropRules {
+    /*
+        TODO: Refactor ProprRules with build trait
+    */
+    pub fn build(&self) -> String {
+        let ser_rules = match self {
+            PropRules::String(rules) => collect_rules(".string()", rules),
+            PropRules::Number(rules) => collect_rules(".number()", rules),
+            PropRules::Unsupported => String::new(),
+        };
+
+        format!("{}.required()", ser_rules)
+    }
+}
+
 #[derive(Debug)]
 pub struct ValidationGenerator {
-    lib: ValidatorLib,
     pub name: String,
     pub properties: IndexMap<String, PropRules>,
 }
 
 impl ValidationGenerator {
-    pub fn new(name: &str, lib: ValidatorLib) -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
             name: name.to_owned(),
-            lib,
             properties: IndexMap::new(),
         }
     }
@@ -120,8 +142,8 @@ impl ValidationGenerator {
         self.properties.insert(prop.name.clone(), prop_rule);
     }
 
-    pub fn from(model: &Model, lib: ValidatorLib) -> Self {
-        let mut generator = ValidationGenerator::new(&model.name, lib);
+    pub fn from(model: &Model) -> Self {
+        let mut generator = ValidationGenerator::new(&model.name);
         for (_, prop_type) in &model.properties {
             generator.register_property(prop_type);
         }
@@ -131,4 +153,14 @@ impl ValidationGenerator {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use super::{NumberRules, PropRules};
+
+    #[test]
+    fn it_builds_number_rules() {
+        let rules = vec![NumberRules::Min(10.4), NumberRules::Max(40.0)];
+        let prop_rules = PropRules::Number(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(built_rules, ".number().min(10.4).max(40).required()");
+    }
+}

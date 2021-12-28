@@ -8,7 +8,7 @@ use std::io;
 use log::{debug, info};
 
 use crate::{
-    codegen::{InterfaceGenerator, ValidationGenerator, ValidatorLib},
+    codegen::{InterfaceGenerator, ValidationGenerator},
     reader::consume_schemas,
 };
 
@@ -38,7 +38,7 @@ impl Sahih {
             let serialized = generator.build();
             debug!("Serialized:\n {}", serialized);
 
-            let generator = ValidationGenerator::from(model, ValidatorLib::Yup);
+            let generator = ValidationGenerator::from(model);
             info!("Serialized:\n {:#?}", generator);
         }
 
