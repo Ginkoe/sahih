@@ -49,6 +49,9 @@ impl BuildableRule for StringRules {
             Self::Min(value) => format!(".min({})", value),
             Self::Max(value) => format!(".max({})", value),
             Self::Email => ".email()".to_string(),
+            /*
+                TODO: Handle special chars escaping
+            */
             Self::Matches(regex) => format!(".matches(/{}/)", regex),
             Self::Uuid => ".uuid()".to_string(),
             Self::OneOf(enumerate) => {
@@ -154,6 +157,8 @@ impl ValidationGenerator {
 
 #[cfg(test)]
 mod tests {
+    use crate::codegen::StringRules;
+
     use super::{NumberRules, PropRules};
 
     #[test]
@@ -162,5 +167,37 @@ mod tests {
         let prop_rules = PropRules::Number(rules);
         let built_rules = prop_rules.build();
         assert_eq!(built_rules, ".number().min(10.4).max(40).required()");
+    }
+
+    #[test]
+    fn it_builds_string_match() {
+        let rules = vec![StringRules::Matches("^[A-Z]{3}$".to_string())];
+        let prop_rules = PropRules::String(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(built_rules, r#".string().matches(/^[A-Z]{3}$/).required()"#);
+    }
+
+    #[test]
+    fn it_builds_string_len() {
+        let rules = vec![StringRules::Min(8), StringRules::Max(128)];
+        let prop_rules = PropRules::String(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(built_rules, ".string().min(8).max(128).required()");
+    }
+
+    #[test]
+    fn it_builds_string_email() {
+        let rules = vec![StringRules::Email];
+        let prop_rules = PropRules::String(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(built_rules, ".string().email().required()");
+    }
+
+    #[test]
+    fn it_builds_string_uuid() {
+        let rules = vec![StringRules::Uuid];
+        let prop_rules = PropRules::String(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(built_rules, ".string().uuid().required()");
     }
 }
