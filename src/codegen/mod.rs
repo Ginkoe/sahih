@@ -1,6 +1,6 @@
 mod interface;
-mod validation;
 pub mod model;
+mod validation;
 
 pub use interface::*;
 pub use validation::*;
