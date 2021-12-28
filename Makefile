@@ -1,4 +1,4 @@
-.PHONY: build check ci clippy fmt lint test
+.PHONY: build check ci clippy fmt lint test release install
 
 BIN_NAME = sahih
 CARGO = $(shell which cargo)
@@ -24,3 +24,9 @@ lint:
 
 test:
 	@$(CARGO) test -- --nocapture --test-threads=1 && echo "Tests OK 👌"
+
+release:
+	@$(CARGO) build --release
+
+install:
+	@cp ./target/release/$(BIN_NAME) /usr/local/bin/$(BIN_NAME)
