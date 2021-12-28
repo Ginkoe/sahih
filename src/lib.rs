@@ -5,6 +5,7 @@ extern crate serde_json;
 
 use std::io;
 
+use config::ConfigManager;
 use log::{debug, info};
 
 use crate::{
@@ -16,31 +17,36 @@ pub mod codegen;
 pub mod config;
 pub mod reader;
 
-#[derive(Default)]
-pub struct Sahih {}
-
-#[derive(Debug)]
-pub struct SahihOptions<'a> {
-    pub schema_path: &'a str,
+pub struct Sahih {
+    config: ConfigManager,
 }
 
 impl Sahih {
-    pub fn new() -> Self {
-        Sahih {}
+    pub fn new(config: ConfigManager) -> Self {
+        Sahih { config }
     }
 
-    pub fn generate(self, opts: SahihOptions) -> io::Result<()> {
-        debug!("Running with options: {:?}", &opts);
-        let schemas = consume_schemas(opts.schema_path);
+    pub fn generate(self) -> io::Result<()> {
+        debug!("Running with options: {:#?}", self.config);
 
-        for model in &schemas {
-            let generator = InterfaceGenerator::from(model);
-            let serialized = generator.build();
-            debug!("Serialized:\n {}", serialized);
+        for (project_name, project_config) in self.config.projects {
+            info!("Starting generation of project {}", project_name);
+            debug!("W/ config :\n{:#?}", project_config);
+            let schemas = consume_schemas(&project_config.input.target);
 
-            let generator = ValidationGenerator::from(model);
-            info!("Serialized:\n {:#?}", generator);
+            for model in &schemas {
+                let generator = InterfaceGenerator::from(model);
+                let serialized = generator.build();
+                debug!("Serialized:\n {}", serialized);
+    
+                let generator = ValidationGenerator::from(model);
+                info!("Serialized:\n {:#?}", generator);
+            }
         }
+
+        
+
+        
 
         Ok(())
     }

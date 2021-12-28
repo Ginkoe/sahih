@@ -2,15 +2,13 @@ extern crate clap;
 extern crate pretty_env_logger;
 extern crate termcolor;
 
-use clap::{arg, App, AppSettings};
+use clap::{arg, App, AppSettings, Arg};
 use log::{debug, error};
-use sahih::{Sahih, SahihOptions};
+use sahih::{config::ConfigManager, Sahih};
 
 fn main() {
     pretty_env_logger::init();
-    let generate_command = App::new("generate")
-        .about("Generates hooks from OpenAPI schema")
-        .arg(arg!([SCHEMA]));
+    let generate_command = App::new("generate").about("Generates hooks from OpenAPI schema");
 
     let cli = App::new("sahih")
         .global_setting(AppSettings::AllArgsOverrideSelf)
@@ -18,27 +16,29 @@ fn main() {
         .global_setting(AppSettings::AllowNegativeNumbers)
         .about("|TODO: ??|")
         .subcommand(generate_command)
+        .arg(
+            Arg::new("config")
+                .short('c')
+                .long("config")
+                .value_name("FILE")
+                .help("Path to config file")
+                .takes_value(true),
+        )
         .get_matches();
 
     debug!("{:?}", cli.subcommand());
 
+    let config_path = cli.value_of("config").unwrap_or("sahih.config.json");
+    let config_manager = ConfigManager::from(config_path);
+    let sahih = Sahih::new(config_manager);
+
     match cli.subcommand() {
-        Some(("generate", sub_matches)) => {
-            if let Some(schema_arg) = sub_matches.value_of("SCHEMA") {
-                let opts = SahihOptions {
-                    schema_path: schema_arg,
-                };
-                let sahih = Sahih::new();
-                match sahih.generate(opts) {
-                    Ok(_) => {
-                        debug!("Succes");
-                    }
-                    Err(e) => error!("Could not generate validation. \n {:?}", e),
-                }
-            } else {
-                error!("No schema path provided")
+        Some(("generate", _)) => match sahih.generate() {
+            Ok(_) => {
+                debug!("Succes");
             }
-        }
+            Err(e) => error!("Could not generate validation. \n {:?}", e),
+        },
         _ => unreachable!(),
     }
 }

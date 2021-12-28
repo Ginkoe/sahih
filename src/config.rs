@@ -26,32 +26,34 @@ pub trait ConfigManagement {
     fn exists_config_file(&self) -> bool;
 }
 
+#[derive(Debug)]
 pub struct ConfigManager {
-    pub config: HashMap<String, SahihConfig>,
+    pub projects: HashMap<String, SahihConfig>,
 }
 
 impl ConfigManager {
     pub fn from(path: &str) -> Self {
+        debug!("Reading config from {}", path);
         let raw_config = std::fs::read_to_string(path).expect("Could not read file");
 
         let deser: HashMap<String, SahihConfig> = serde_json::from_str(&raw_config).unwrap();
         debug!("Deser config to {:#?}", deser);
 
-        Self { config: deser }
+        Self { projects: deser }
     }
 }
 
 mod tests {
     #[test]
     fn it_deser_from_example_config() {
-        let file_path = "./fixtures/sahih.json";
+        let file_path = "./fixtures/sahih.config.json";
 
         let config_manager = crate::config::ConfigManager::from(file_path);
         let target_output = "./assets/generated/model";
         let overwrite = false;
-        let target_input = "./assets/api-schema.json";
+        let target_input = "./fixtures/api-schema.json";
 
-        let alphaproject = config_manager.config.get("schemaalpha").unwrap();
+        let alphaproject = config_manager.projects.get("schemaalpha").unwrap();
 
         assert_eq!(alphaproject.output.target, target_output);
         assert_eq!(alphaproject.input.target, target_input);

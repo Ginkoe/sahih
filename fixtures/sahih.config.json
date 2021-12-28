@@ -4,7 +4,7 @@
             "target": "./assets/generated/model"
         },
         "input": {
-            "target": "./assets/api-schema.json"
+            "target": "./fixtures/api-schema.json"
         }
     }
 }
