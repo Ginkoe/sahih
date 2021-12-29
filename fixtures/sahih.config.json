@@ -1,10 +1,10 @@
 {
-    "schemaalpha": {
-        "output": {
-            "target": "./assets/generated/model"
-        },
-        "input": {
-            "target": "./fixtures/api-schema.json"
-        }
+  "schemaalpha": {
+    "output": {
+      "target": "./playground/generated/model"
+    },
+    "input": {
+      "target": "./fixtures/api-schema.json"
     }
+  }
 }
