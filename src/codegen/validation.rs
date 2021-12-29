@@ -80,7 +80,7 @@ impl PropRules {
         let ser_rules = match self {
             PropRules::String(rules) => collect_rules(".string()", rules),
             PropRules::Number(rules) => collect_rules(".number()", rules),
-            PropRules::Unsupported => String::new(),
+            PropRules::Unsupported => String::from(".mixed()"),
         };
 
         format!("{}.required()", ser_rules)
