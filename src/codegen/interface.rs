@@ -79,7 +79,7 @@ impl InterfaceGenerator {
             .fold(String::new(), |sum, prop| format!("{}\n\t{}", sum, prop));
 
         format!(
-            "interface {name} {{{props}\n}}",
+            "export interface {name} {{{props}\n}}",
             name = self.name,
             props = props_literal
         )
