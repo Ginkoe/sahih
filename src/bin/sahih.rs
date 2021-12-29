@@ -4,7 +4,7 @@ extern crate termcolor;
 
 use clap::{App, AppSettings, Arg};
 use log::{debug, error};
-use sahih::{config::ConfigManager, Sahih};
+use sahih::{config::ConfigManager, printer::Printer, Sahih};
 
 fn main() {
     pretty_env_logger::init();
@@ -30,7 +30,8 @@ fn main() {
 
     let config_path = cli.value_of("config").unwrap_or("sahih.config.json");
     let config_manager = ConfigManager::from(config_path);
-    let sahih = Sahih::new(config_manager);
+    let std_output = termcolor::StandardStream::stdout(termcolor::ColorChoice::Always);
+    let sahih = Sahih::new(config_manager, Printer::new(std_output));
 
     match cli.subcommand() {
         Some(("generate", _)) => match sahih.generate() {

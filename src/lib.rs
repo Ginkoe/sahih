@@ -11,6 +11,7 @@ use std::{
 
 use config::ConfigManager;
 use log::{debug, info};
+use printer::{ColorPalette, Print, PrintHelper};
 
 use crate::{
     codegen::{InterfaceGenerator, ValidationGenerator},
@@ -19,19 +20,28 @@ use crate::{
 
 pub mod codegen;
 pub mod config;
+pub mod constants;
+pub mod printer;
 pub mod reader;
 
-pub struct Sahih {
+pub struct Sahih<W: Print + PrintHelper> {
     config: ConfigManager,
+    printer: W,
 }
 
-impl Sahih {
-    pub fn new(config: ConfigManager) -> Self {
-        Sahih { config }
+impl<W> Sahih<W>
+where
+    W: Print + PrintHelper,
+{
+    pub fn new(config: ConfigManager, printer: W) -> Self {
+        Sahih { config, printer }
     }
 
-    pub fn generate(self) -> io::Result<()> {
+    pub fn generate(mut self) -> io::Result<()> {
         debug!("Running with options: {:#?}", self.config);
+
+        self.printer.print_welcome()?;
+        self.printer.print_target_projects(&self.config)?;
 
         for (project_name, project_config) in self.config.projects {
             info!("Starting generation of project {}", project_name);
@@ -69,6 +79,10 @@ import yup from "yup";
                 output_file.write_all(format!("{}\n\n\n", generator.build()).as_bytes())?;
                 info!("Serialized:\n {:#?}", generator);
             }
+
+            ColorPalette::BoldGreen.print(&format!("🎉 {}", &project_name), &mut self.printer)?;
+            self.printer
+                .println(" - Generation of validation module was successful !")?;
         }
 
         Ok(())
