@@ -1,8 +1,6 @@
 [package]
 authors = ["Ginkoe <ginkoe@protonmail.com>"]
-categories = ["command-line-interface", "command-line-utilities"]
 description = "Toolings for making Fullstack easier"
-keywords = ["cli", "terminal", "productivity", "git", "openapi", "swagger", "validation"]
 name = "sahih"
 version = "0.1.0"
 
