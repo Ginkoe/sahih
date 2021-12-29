@@ -56,7 +56,7 @@ impl BuildableRule for StringRules {
             Self::Uuid => ".uuid()".to_string(),
             Self::OneOf(enumerate) => {
                 let quoted: Vec<String> = enumerate.iter().map(|e| format!("`{}`", e)).collect();
-                quoted.join(",")
+                format!(".oneOf([{}])", quoted.join(","))
             }
         }
     }
@@ -219,5 +219,20 @@ mod tests {
         let prop_rules = PropRules::String(rules);
         let built_rules = prop_rules.build();
         assert_eq!(built_rules, ".string().uuid().required()");
+    }
+
+    #[test]
+    fn it_builds_string_enums() {
+        let enum_of: Vec<String> = vec!["north", "west", "south", "est"]
+            .iter()
+            .map(|e| e.to_string())
+            .collect();
+        let rules = vec![StringRules::OneOf(enum_of)];
+        let prop_rules = PropRules::String(rules);
+        let built_rules = prop_rules.build();
+        assert_eq!(
+            built_rules,
+            r#".string().oneOf([`north`,`west`,`south`,`est`]).required()"#
+        );
     }
 }
