@@ -153,6 +153,26 @@ impl ValidationGenerator {
 
         generator
     }
+
+    pub fn build(&self) -> String {
+        let prop_shape: String = self
+            .properties
+            .iter()
+            .map(|(prop_name, prop_rules)| {
+                format!(
+                    "{prop_name}: yup{prop_rules},\n",
+                    prop_name = prop_name,
+                    prop_rules = prop_rules.build()
+                )
+            })
+            .collect();
+
+        format!(
+            "export const {model_name}Validator = yup.object().shape({{ {serialized_shape} }});\n",
+            model_name = self.name,
+            serialized_shape = prop_shape
+        )
+    }
 }
 
 #[cfg(test)]
